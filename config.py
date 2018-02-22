@@ -18,7 +18,7 @@ ball_color = colors.WHITE
 
 paddle_width = 80
 paddle_height = 20
-paddle_image = 'img/paddle.jpg'
+paddle_image = 'img/paddle.png'
 paddle_color = colors.WHITE
 paddle_speed = 6
 

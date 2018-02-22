@@ -1,19 +1,24 @@
 import pygame
 
 import config as c
+from game import Game as G
 from game_object import GameObject
 
 
 class Paddle(GameObject):
-    def __init__(self, x, y, w, h, color, offset):
+    def __init__(self, x, y, w, h, paddle_img_path, color, offset):
         GameObject.__init__(self, x, y, w, h)
         self.color = color
         self.offset = offset
         self.moving_left = False
         self.moving_right = False
+        self.image = pygame.image.load(paddle_img_path).convert_alpha()
+        self.surface = (x, y)
+        self.test = None
 
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, self.bounds)
+        self.test = surface.blit(self.image, self.surface)
 
     def handle(self, key):
         if key == pygame.K_LEFT:

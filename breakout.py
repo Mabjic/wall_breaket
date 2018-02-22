@@ -43,6 +43,7 @@ class Breakout(Game):
         self.start_level =False
         self.paddle = None
         self.bricks = None
+        self.brickLifes = []
         self.ball = None
         self.menu_buttons = []
         self.is_game_running = False
@@ -70,7 +71,7 @@ class Breakout(Game):
             self.game_over = True
             self.is_game_running = False
 
-        for i, (text, handler) in enumerate((('Jouer', on_play), ('Quitter', on_quit))):
+        for i, (text, handler) in enumerate((('PLAY', on_play), ('QUIT', on_quit))):
             b = Button(c.menu_offset_x + (c.menu_button_w + 60) * i,
                        c.menu_offset_y,
                        c.menu_button_w,
@@ -92,14 +93,14 @@ class Breakout(Game):
     def create_labels(self):
         self.score_label = TextObject(c.score_offset,
                                       c.status_offset_y,
-                                      lambda: f'Score: {self.score}',
+                                      lambda: f'SCORE: {self.score}',
                                       c.text_color,
                                       c.font_name,
                                       c.font_size)
         self.objects.append(self.score_label)
         self.lives_label = TextObject(c.lives_offset,
                                       c.status_offset_y,
-                                      lambda: f'Vies: {self.lives}',
+                                      lambda: f'LIVES: {self.lives}',
                                       c.text_color,
                                       c.font_name,
                                       c.font_size)
@@ -107,6 +108,7 @@ class Breakout(Game):
 
     def create_ball(self):
         speed = (random.randint(-2, 2), c.ball_speed)
+        #speed = (0, c.ball_speed)
         self.ball = Ball(c.screen_width // 2,
                          c.screen_height // 2,
                          c.ball_radius,
@@ -119,6 +121,7 @@ class Breakout(Game):
                         c.screen_height - c.paddle_height * 2,
                         c.paddle_width,
                         c.paddle_height,
+                        c.paddle_image,
                         c.paddle_color,
                         c.paddle_speed)
         self.keydown_handlers[pygame.K_LEFT].append(paddle.handle)
@@ -140,7 +143,7 @@ class Breakout(Game):
                 effect = None
                 brick_rand = random.randint(0, 2)
                 brick_color = c.brick_color[brick_rand]
-                brick_lifes = brick_rand + 1
+                brick_lifes = brick_rand
                 brick = Brick(offset_x + col * (w + 1),
                               c.offset_y + row * (h + 1),
                               w,
@@ -214,21 +217,22 @@ class Breakout(Game):
             self.ball.speed = (-s[0], s[1])
 
         # Hits brick
-        for brick in self.bricks:
+        for index, brick in enumerate(self.bricks):
             edge = intersect(brick, self.ball)
 
             if not edge:
                 continue
             else:
                 self.sound_effects['brick_hit'].play()
-                brick.decrementBrickLife()
+                brick.decrement_brick_life()
 
             print("brick lifes : ", brick.type)
 
-            if brick.type == 0:
+            if brick.type == -1:
                 self.bricks.remove(brick)
                 self.objects.remove(brick)
-                self.score += self.points_per_brick
+
+            self.score += self.points_per_brick
 
             if edge in ('top', 'bottom'):
                 self.ball.speed = (s[0], -s[1])
