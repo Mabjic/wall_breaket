@@ -70,7 +70,7 @@ class Breakout(Game):
             self.game_over = True
             self.is_game_running = False
 
-        for i, (text, handler) in enumerate((('PLAY', on_play), ('QUIT', on_quit))):
+        for i, (text, handler) in enumerate((('Jouer', on_play), ('Quitter', on_quit))):
             b = Button(c.menu_offset_x + (c.menu_button_w + 60) * i,
                        c.menu_offset_y,
                        c.menu_button_w,
@@ -92,14 +92,14 @@ class Breakout(Game):
     def create_labels(self):
         self.score_label = TextObject(c.score_offset,
                                       c.status_offset_y,
-                                      lambda: f'SCORE: {self.score}',
+                                      lambda: f'Score: {self.score}',
                                       c.text_color,
                                       c.font_name,
                                       c.font_size)
         self.objects.append(self.score_label)
         self.lives_label = TextObject(c.lives_offset,
                                       c.status_offset_y,
-                                      lambda: f'LIVES: {self.lives}',
+                                      lambda: f'Vies: {self.lives}',
                                       c.text_color,
                                       c.font_name,
                                       c.font_size)
@@ -138,17 +138,15 @@ class Breakout(Game):
         for row in range(c.row_count):
             for col in range(brick_count):
                 effect = None
-                brick_color = c.brick_color[random.randint(0, 4)]
-                # index = random.randint(0, 10)
-                # if index < len(special_effects):
-                #     brick_color, start_effect_func, reset_effect_func = list(special_effects.values())[index]
-                #     effect = start_effect_func, reset_effect_func
-
+                brick_rand = random.randint(0, 2)
+                brick_color = c.brick_color[brick_rand]
+                brick_lifes = brick_rand + 1
                 brick = Brick(offset_x + col * (w + 1),
                               c.offset_y + row * (h + 1),
                               w,
                               h,
                               brick_color,
+                              brick_lifes,
                               effect)
                 bricks.append(brick)
                 self.objects.append(brick)
@@ -218,13 +216,19 @@ class Breakout(Game):
         # Hits brick
         for brick in self.bricks:
             edge = intersect(brick, self.ball)
+
             if not edge:
                 continue
             else:
                 self.sound_effects['brick_hit'].play()
-            self.bricks.remove(brick)
-            self.objects.remove(brick)
-            self.score += self.points_per_brick
+                brick.decrementBrickLife()
+
+            print("brick lifes : ", brick.type)
+
+            if brick.type == 0:
+                self.bricks.remove(brick)
+                self.objects.remove(brick)
+                self.score += self.points_per_brick
 
             if edge in ('top', 'bottom'):
                 self.ball.speed = (s[0], -s[1])
