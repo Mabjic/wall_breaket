@@ -71,8 +71,8 @@ class Breakout(Game):
             self.is_game_running = False
 
         for i, (text, handler) in enumerate((('PLAY', on_play), ('QUIT', on_quit))):
-            b = Button(c.menu_offset_x,
-                       c.menu_offset_y + (c.menu_button_h + 5) * i,
+            b = Button(c.menu_offset_x + (c.menu_button_w + 60) * i,
+                       c.menu_offset_y,
                        c.menu_button_w,
                        c.menu_button_h,
                        text,
@@ -131,18 +131,18 @@ class Breakout(Game):
     def create_bricks(self):
         w = c.brick_width
         h = c.brick_height
-        brick_count = c.screen_width // (w +1)
+        brick_count = c.screen_width // (w + 1)
         offset_x = (c.screen_width - brick_count * (w + 1)) // 2
 
         bricks = []
         for row in range(c.row_count):
             for col in range(brick_count):
                 effect = None
-                brick_color = c.brick_color
-                index = random.randint(0, 10)
-                if index < len(special_effects):
-                    brick_color, start_effect_func, reset_effect_func = list(special_effects.values())[index]
-                    effect = start_effect_func, reset_effect_func
+                brick_color = c.brick_color[random.randint(0, 4)]
+                # index = random.randint(0, 10)
+                # if index < len(special_effects):
+                #     brick_color, start_effect_func, reset_effect_func = list(special_effects.values())[index]
+                #     effect = start_effect_func, reset_effect_func
 
                 brick = Brick(offset_x + col * (w + 1),
                               c.offset_y + row * (h + 1),
@@ -159,9 +159,9 @@ class Breakout(Game):
             edges = dict(
                 left=Rect(obj.left, obj.top, 1, obj.height),
                 right=Rect(obj.right, obj.top, 1, obj.height),
-                top=Rect(obj.left, obj.top, obj.width, 1))
-            collisions = set(edge for edge, rect in edges.items() if
-                             ball.bounds.colliderect(rect))
+                top=Rect(obj.left, obj.top, obj.width, 1),
+                bottom=Rect(obj.left, obj.bottom, obj.width, 1))
+            collisions = set(edge for edge, rect in edges.items() if ball.bounds.colliderect(rect))
             if not collisions:
                 return None
 
@@ -177,7 +177,7 @@ class Breakout(Game):
                     return 'right'
 
             if 'bottom' in collisions:
-                if ball.centery >= obj.top:
+                if ball.centery >= obj.bottom:
                     return 'bottom'
                 if ball.centerx < obj.left:
                     return 'left'
