@@ -12,13 +12,11 @@ class Paddle(GameObject):
         self.offset = offset
         self.moving_left = False
         self.moving_right = False
-        self.image = pygame.image.load(paddle_img_path).convert_alpha()
         self.surface = (x, y)
         self.test = None
 
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, self.bounds)
-        self.test = surface.blit(self.image, self.surface)
 
     def handle(self, key):
         if key == pygame.K_LEFT:
