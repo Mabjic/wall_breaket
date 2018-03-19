@@ -16,18 +16,27 @@ from game import Game
 from text_object import TextObject
 
 special_effects = dict(
-    long_paddle=(colors.ORANGE,
-                 lambda g: g.paddle.bounds.inflate_ip(c.paddle_width // 2, 0),
-                 lambda g: g.paddle.bounds.inflate_ip(-c.paddle_width // 2, 0)),
-    slow_ball=(colors.AQUAMARINE2,
-               lambda g: g.change_ball_speed(-1),
-               lambda g: g.change_ball_speed(1)),
-    tripple_points=(colors.DARKSEAGREEN4,
-                    lambda g: g.set_points_per_brick(3),
-                    lambda g: g.set_points_per_brick(1)),
-    extra_life=(colors.GOLD1,
-                lambda g: g.add_life(),
-                lambda g: None))
+        long_paddle=(colors.WHITE, 1,
+                     lambda g: g.paddle.bounds.inflate_ip(c.paddle_width // 2, 0),
+                     lambda g: g.paddle.bounds.inflate_ip(-c.paddle_width // 2, 0)),
+        slow_ball=(colors.GREEN, 1,
+                   lambda g: g.change_ball_speed(-c.ball_speed_down),
+                   lambda g: g.change_ball_speed(c.ball_speed_down)
+                   ),
+        fast_ball=(colors.GREEN, 1,
+                   lambda g: g.change_ball_speed(c.ball_speed_up),
+                   lambda g: g.change_ball_speed(-c.ball_speed_up)
+                   ),
+        tripple_points=(colors.RED1, 1,
+                        lambda g: g.set_points_per_brick(3),
+                        lambda g: g.set_points_per_brick(1)
+                        ),
+        extra_life=(colors.GOLD1, 1,
+                    lambda g: g.add_life(c.uplife),
+                    lambda g: None),
+        short_paddle=(colors.WHITE, 1,
+                      lambda g: g.paddle.bounds.inflate_ip(c.paddle_width // -2, 0),
+                      lambda g: g.paddle.bounds.inflate_ip(-c.paddle_width // -2, 0)))
 
 assert os.path.isfile('sound_effects/brick_hit.wav')
 
@@ -40,7 +49,7 @@ class Breakout(Game):
         self.effect_start_time = None
         self.score = 0
         self.lives = c.initial_lives
-        self.start_level =False
+        self.start_level = False
         self.paddle = None
         self.bricks = None
         self.brickLifes = []
@@ -50,14 +59,15 @@ class Breakout(Game):
         self.create_objects()
         self.points_per_brick = 1
 
-    def add_life(self):
-        self.lives += 1
+    def add_life(self, uplife):
+        self.lives += uplife
 
     def set_points_per_brick(self, points):
         self.points_per_brick = points
 
     def change_ball_speed(self, dy):
         self.ball.speed = (self.ball.speed[0], self.ball.speed[1] + dy)
+        self.ball.update()
 
     def create_menu(self):
         def on_play(button):
@@ -136,24 +146,42 @@ class Breakout(Game):
         h = c.brick_height
         brick_count = c.screen_width // (w + 1)
         offset_x = (c.screen_width - brick_count * (w + 1)) // 2
-
+        disp = [[0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+                [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                [1, 1, 0, 1, 1, 1, 1, 0, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+                [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+                [0, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
         bricks = []
-        for row in range(c.row_count):
-            for col in range(brick_count):
-                effect = None
-                brick_rand = random.randint(0, 2)
-                brick_color = c.brick_color[brick_rand]
-                brick_lifes = brick_rand
-                brick = Brick(offset_x + col * (w + 1),
-                              c.offset_y + row * (h + 1),
-                              w,
-                              h,
-                              brick_color,
-                              brick_lifes,
-                              effect)
-                bricks.append(brick)
-                self.objects.append(brick)
-            self.bricks = bricks
+
+        for row in range(len(disp)):
+            myRow = disp[row]
+            for col in range(len(myRow)):
+
+                if myRow[col] == 1:
+                    brick_effect = None
+                    brick_rand = random.randint(0, 2)
+                    brick_color = c.brick_color[brick_rand]
+                    brick_lifes = brick_rand + 1
+                    index = random.randint(0, 20)
+                    if index < len(special_effects):
+                        print("brick power ", list(special_effects)[index])
+                        brick_color, brick_lifes, start_effect_func, reset_effect_func = list(special_effects.values())[
+                            index]
+                        brick_effect = start_effect_func, reset_effect_func
+                    brick = Brick(offset_x + col * (w + 1),
+                                  c.offset_y + row * (h + 1),
+                                  w,
+                                  h,
+                                  brick_color,
+                                  brick_lifes,
+                                  brick_lifes,
+                                  brick_effect)
+                    bricks.append(brick)
+                    self.objects.append(brick)
+        self.bricks = bricks
 
     def handle_ball_collisions(self):
         def intersect(obj, ball):
@@ -228,11 +256,20 @@ class Breakout(Game):
 
             print("brick lifes : ", brick.type)
 
-            if brick.type == -1:
+            if brick.type == 0:
                 self.bricks.remove(brick)
                 self.objects.remove(brick)
+                self.score += brick.life * self.points_per_brick
 
-            self.score += self.points_per_brick
+                if brick.special_effect is not None:
+                    if self.reset_effect is not None:
+                        self.reset_effect(self)
+
+                    # Trigger special effect
+                    self.effect_start_time = datetime.now()
+                    brick.special_effect[0](self)
+                    # Set current reset effect function
+                    self.reset_effect = brick.special_effect[1]
 
             if edge in ('top', 'bottom'):
                 self.ball.speed = (s[0], -s[1])
