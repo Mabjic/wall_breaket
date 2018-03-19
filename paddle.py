@@ -6,7 +6,7 @@ from game_object import GameObject
 
 
 class Paddle(GameObject):
-    def __init__(self, x, y, w, h, paddle_img_path, color, offset):
+    def __init__(self, x, y, w, h, color, offset):
         GameObject.__init__(self, x, y, w, h)
         self.color = color
         self.offset = offset

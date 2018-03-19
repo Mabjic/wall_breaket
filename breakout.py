@@ -131,7 +131,6 @@ class Breakout(Game):
                         c.screen_height - c.paddle_height * 2,
                         c.paddle_width,
                         c.paddle_height,
-                        c.paddle_image,
                         c.paddle_color,
                         c.paddle_speed)
         self.keydown_handlers[pygame.K_LEFT].append(paddle.handle)
