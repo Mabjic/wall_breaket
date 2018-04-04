@@ -12,10 +12,12 @@ class Button(GameObject):
                  w,
                  h,
                  text,
+                 choice,
                  on_click=lambda x: None,
                  padding=0):
         super().__init__(x, y, w, h)
         self.state = 'normal'
+        self.choice = choice
         self.on_click = on_click
 
         self.text = TextObject(x + padding,

@@ -1,19 +1,19 @@
 import colors
 
-screen_width = 800
+screen_width = 450
 screen_height = 600
 background_image = 'img/fond.jpg'
 
 frame_rate = 90
 
 row_count = 9
-brick_width = 75
+brick_width = 37
 brick_height = 20
 brick_color = [colors.AQUAMARINE1, colors.DEEPSKYBLUE2, colors.DEEPPINK2]
 offset_y = brick_height + 10
 
 ball_speed = 4
-ball_speed_up = 30
+ball_speed_up = 8
 ball_speed_down = 1
 ball_radius = 8
 ball_color = colors.WHITE
@@ -51,9 +51,9 @@ button_normal_back_color = colors.GRAY74
 button_hover_back_color = colors.GRAY74
 button_pressed_back_color = colors.GRAY74
 
-menu_offset_x = 320
-menu_offset_y = 300
-menu_button_w = 75
-menu_button_h = 30
+menu_offset_x = 170
+menu_offset_y = 75
+menu_button_w = 95
+menu_button_h = 31
 
 uplife = 1

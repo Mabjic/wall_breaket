@@ -15,18 +15,110 @@ import colors
 from game import Game
 from text_object import TextObject
 
+button = dict(
+    Space_invader=('Space invader', 0),
+    Pac_man=('Pac Man', 1),
+    Batman=('Batman', 2),
+    Cesi=('CESI', 3),
+    Superman=('Superman', 4),
+    Mario=('Mario', 5),
+    Spider=('Spiderman', 6),
+    Quitter=('Quitter', 99))
+
+map = dict(
+    dispSpace=([[0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+               [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+               [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+               [1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1],
+               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+               [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+               [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+               [0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0]]),
+
+    dispPac=([[0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+             [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+             [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+             [1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+             [1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1],
+             [1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1],
+             [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1]]),
+
+    dispBat=([[0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0],
+             [0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0],
+             [1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+             [1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
+             [0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+             [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0]]),
+
+    dispCESI=([[0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0],
+              [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+              [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+              [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+              [0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0],
+              [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+              [1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+              [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+              [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0]]),
+
+    dispSuperman=([[0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+                   [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+                   [0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0],
+                   [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+                   [1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1],
+                   [0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0],
+                   [0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0],
+                   [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+                   [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]),
+
+    dispMario=([[0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0],
+                [0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0],
+                [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+                [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0]]),
+
+    dispSpide=([[0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+                [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+                [1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1],
+                [0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
+                [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                [0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
+                [1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1],
+                [0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+                [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]]),
+)
+
 special_effects = dict(
         long_paddle=(colors.WHITE, 1,
                      lambda g: g.paddle.bounds.inflate_ip(c.paddle_width // 2, 0),
                      lambda g: g.paddle.bounds.inflate_ip(-c.paddle_width // 2, 0)),
-        slow_ball=(colors.GREEN, 1,
-                   lambda g: g.change_ball_speed(-c.ball_speed_down),
-                   lambda g: g.change_ball_speed(c.ball_speed_down)
-                   ),
-        fast_ball=(colors.GREEN, 1,
-                   lambda g: g.change_ball_speed(c.ball_speed_up),
-                   lambda g: g.change_ball_speed(-c.ball_speed_up)
-                   ),
         tripple_points=(colors.RED1, 1,
                         lambda g: g.set_points_per_brick(3),
                         lambda g: g.set_points_per_brick(1)
@@ -65,10 +157,6 @@ class Breakout(Game):
     def set_points_per_brick(self, points):
         self.points_per_brick = points
 
-    def change_ball_speed(self, dy):
-        self.ball.speed = (self.ball.speed[0], self.ball.speed[1] + dy)
-        self.ball.update()
-
     def create_menu(self):
         def on_play(button):
             for b in self.menu_buttons:
@@ -76,17 +164,26 @@ class Breakout(Game):
 
             self.is_game_running = True
             self.start_level = True
+            self.create_bricks(button.choice)
+
 
         def on_quit(button):
             self.game_over = True
             self.is_game_running = False
 
-        for i, (text, handler) in enumerate((('PLAY', on_play), ('QUIT', on_quit))):
-            b = Button(c.menu_offset_x + (c.menu_button_w + 60) * i,
-                       c.menu_offset_y,
+        for i in range(0,len(button)):
+            name, choice= list(button.values())[i]
+            if choice == 99:
+                handler = on_quit
+            else:
+                handler = on_play
+
+            b = Button(c.menu_offset_x,
+                       c.menu_offset_y + 40*i,
                        c.menu_button_w,
                        c.menu_button_h,
-                       text,
+                       name,
+                       choice,
                        handler,
                        padding=5)
             self.objects.append(b)
@@ -94,7 +191,6 @@ class Breakout(Game):
             self.mouse_handlers.append(b.handle_mouse_event)
 
     def create_objects(self):
-        self.create_bricks()
         self.create_paddle()
         self.create_ball()
         self.create_labels()
@@ -120,7 +216,7 @@ class Breakout(Game):
         speed = (random.randint(-2, 2), c.ball_speed)
         #speed = (0, c.ball_speed)
         self.ball = Ball(c.screen_width // 2,
-                         c.screen_height // 2,
+                         500,
                          c.ball_radius,
                          c.ball_color,
                          speed)
@@ -140,19 +236,13 @@ class Breakout(Game):
         self.paddle = paddle
         self.objects.append(self.paddle)
 
-    def create_bricks(self):
+    def create_bricks(self, choice):
         w = c.brick_width
         h = c.brick_height
         brick_count = c.screen_width // (w + 1)
         offset_x = (c.screen_width - brick_count * (w + 1)) // 2
-        disp = [[0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
-                [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
-                [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                [1, 1, 0, 1, 1, 1, 1, 0, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
-                [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-                [0, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
+        disp =  list(map.values())[choice]
+
         bricks = []
 
         for row in range(len(disp)):
@@ -164,7 +254,7 @@ class Breakout(Game):
                     brick_rand = random.randint(0, 2)
                     brick_color = c.brick_color[brick_rand]
                     brick_lifes = brick_rand + 1
-                    index = random.randint(0, 20)
+                    index = random.randint(0, 50)
                     if index < len(special_effects):
                         print("brick power ", list(special_effects)[index])
                         brick_color, brick_lifes, start_effect_func, reset_effect_func = list(special_effects.values())[
