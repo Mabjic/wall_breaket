@@ -23,6 +23,7 @@ button = dict(
     Superman=('Superman', 4),
     Mario=('Mario', 5),
     Spider=('Spiderman', 6),
+    # OnlyOne=('OnlyOne', 7),
     Quitter=('Quitter', 99))
 
 map = dict(
@@ -113,6 +114,20 @@ map = dict(
                 [0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0],
                 [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0],
                 [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]]),
+
+    # onlyOne=([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]),
 )
 
 special_effects = dict(
@@ -164,15 +179,16 @@ class Breakout(Game):
 
             self.is_game_running = True
             self.start_level = True
+            self.menu_buttons.clear()
             self.create_bricks(button.choice)
-
 
         def on_quit(button):
             self.game_over = True
             self.is_game_running = False
 
-        for i in range(0,len(button)):
-            name, choice= list(button.values())[i]
+        self.menu_buttons.clear()
+        for i in range(0, len(button)):
+            name, choice = list(button.values())[i]
             if choice == 99:
                 handler = on_quit
             else:
@@ -223,6 +239,8 @@ class Breakout(Game):
         self.objects.append(self.ball)
 
     def create_paddle(self):
+        self.paddle = None
+
         paddle = Paddle((c.screen_width - c.paddle_width) // 2,
                         c.screen_height - c.paddle_height * 2,
                         c.paddle_width,
@@ -237,11 +255,16 @@ class Breakout(Game):
         self.objects.append(self.paddle)
 
     def create_bricks(self, choice):
+        if self.bricks is not None:
+            for b in self.bricks:
+                self.objects.remove(b)
+            self.bricks.clear()
+
         w = c.brick_width
         h = c.brick_height
         brick_count = c.screen_width // (w + 1)
         offset_x = (c.screen_width - brick_count * (w + 1)) // 2
-        disp =  list(map.values())[choice]
+        disp = list(map.values())[choice]
 
         bricks = []
 
@@ -375,8 +398,10 @@ class Breakout(Game):
 
         if not self.bricks:
             self.show_message('YOU WIN !', centralized=True)
-            self.is_game_running = False
-            self.game_over = True
+            # self.is_game_running = False
+            # self.game_over = True
+            self.objects.clear()
+            self.create_objects()
             return
 
         if self.reset_effect:
