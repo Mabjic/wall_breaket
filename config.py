@@ -47,9 +47,10 @@ sounds_effects = dict(
 message_duration = 2
 
 button_text_color = colors.WHITE,
-button_normal_back_color = colors.GRAY74
-button_hover_back_color = colors.GRAY74
+button_normal_back_color = colors.BLACK
+button_hover_back_color = colors.BLACK
 button_pressed_back_color = colors.GRAY74
+button_quit_back_color = colors.RED2
 
 menu_offset_x = 170
 menu_offset_y = 75

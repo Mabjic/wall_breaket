@@ -23,7 +23,6 @@ button = dict(
     Superman=('Superman', 4),
     Mario=('Mario', 5),
     Spider=('Spiderman', 6),
-    # OnlyOne=('OnlyOne', 7),
     Quitter=('Quitter', 99))
 
 map = dict(
@@ -232,7 +231,7 @@ class Breakout(Game):
         speed = (random.randint(-2, 2), c.ball_speed)
         #speed = (0, c.ball_speed)
         self.ball = Ball(c.screen_width // 2,
-                         500,
+                         400,
                          c.ball_radius,
                          c.ball_color,
                          speed)
@@ -295,6 +294,7 @@ class Breakout(Game):
                     self.objects.append(brick)
         self.bricks = bricks
 
+    # Gère les collisions de la balle
     def handle_ball_collisions(self):
         def intersect(obj, ball):
             edges = dict(
@@ -345,7 +345,15 @@ class Breakout(Game):
         if self.ball.top > c.screen_height:
             self.lives -= 1
             if self.lives == 0:
-                self.game_over = True
+                self.show_message('GAME OVER !', centralized=True)
+                self.is_game_running = False
+                if self.bricks is not None:
+                    for b in self.bricks:
+                        self.objects.remove(b)
+                    self.bricks.clear()
+                self.lives = 3
+                self.objects.clear()
+                self.create_objects()
             else:
                 self.create_ball()
         # Hits ceiling
@@ -398,7 +406,7 @@ class Breakout(Game):
 
         if not self.bricks:
             self.show_message('YOU WIN !', centralized=True)
-            # self.is_game_running = False
+            self.is_game_running = False
             # self.game_over = True
             self.objects.clear()
             self.create_objects()
