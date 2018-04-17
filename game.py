@@ -19,6 +19,7 @@ class Game:
         self.keydown_handlers = defaultdict(list)
         self.keyup_handlers = defaultdict(list)
         self.mouse_handlers = []
+        self.pause = False
 
     def update(self):
         for o in self.objects:
@@ -34,6 +35,10 @@ class Game:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    self.pause = True
+                    self.paused(event.key)
+
                 for handler in self.keydown_handlers[event.key]:
                     handler(event.key)
             elif event.type == pygame.KEYUP:

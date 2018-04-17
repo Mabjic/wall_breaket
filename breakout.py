@@ -437,6 +437,18 @@ class Breakout(Game):
         pygame.display.update()
         time.sleep(c.message_duration)
 
+    def paused(self, key):
+        if not self.is_game_running:
+            return
+
+        self.show_message("PAUSE", centralized=True)
+        # pygame.display.update()
+
+        while self.pause:
+            for event in pygame.event.get():
+                if key == pygame.K_p and event.type == pygame.KEYDOWN:
+                    self.pause = False
+
 
 def main():
     Breakout().run()
